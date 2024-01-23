@@ -31,7 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
 }
 
 - (void)didReceiveMemoryWarning
@@ -64,9 +64,10 @@
         NSLog(@"Viewing note..");
         EDAMNoteFilter* filter = [[EDAMNoteFilter alloc] initWithOrder:0 ascending:NO words:nil notebookGuid:nil tagGuids:nil timeZone:nil inactive:NO emphasized:nil];
         [[EvernoteNoteStore noteStore] findNotesWithFilter:filter offset:0 maxNotes:100 success:^(EDAMNoteList *list) {
-            NSLog(@"Notes : %lu",(unsigned long)list.notes.count);
+                                          NSLog(@"Notes : %lu",(unsigned long)list.notes.count);
             [[EvernoteNoteStore noteStore] viewNoteInEvernote:list.notes[0]];
-        } failure:^(NSError *error) {
+        }
+        failure:^(NSError *error) {
             NSLog(@"Error : %@",error);
         }];
     }
@@ -88,42 +89,44 @@
         nbc.modalPresentationStyle = UIModalPresentationFormSheet;
         notbookChooserNav.modalPresentationStyle = UIModalPresentationFormSheet;
     }
-    [[self navigationController] presentViewController:notbookChooserNav animated:YES completion:^{
-        [nbc.navigationItem setTitle:@"Select a notebook"];
-    }];
+    [[self navigationController] presentViewController:notbookChooserNav animated:YES completion:^ {
+                                    [nbc.navigationItem setTitle:@"Select a notebook"];
+                                }];
 }
 
 - (IBAction)createBusinessNote:(id)sender {
     EvernoteNoteStore *noteStore = [EvernoteNoteStore noteStore];
     [noteStore listBusinessNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
-        if(linkedNotebooks.count>0) {
-           EDAMLinkedNotebook* businessNotebook = linkedNotebooks[0];
+                  if(linkedNotebooks.count>0) {
+                      EDAMLinkedNotebook* businessNotebook = linkedNotebooks[0];
             NSString* filePath = [[NSBundle mainBundle] pathForResource:@"evernote_logo_4c-sm" ofType:@"png"];
             NSData *myFileData = [NSData dataWithContentsOfFile:filePath];
             NSData *dataHash = [myFileData enmd5];
             EDAMData *edamData = [[EDAMData alloc] initWithBodyHash:dataHash size:(int)myFileData.length body:myFileData];
             EDAMResource* resource = [[EDAMResource alloc] initWithGuid:nil noteGuid:nil data:edamData mime:@"image/png" width:0 height:0 duration:0 active:0 recognition:0 attributes:nil updateSequenceNum:0 alternateData:nil];
             NSString *noteContent = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                     "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
-                                     "<en-note>"
-                                     "<span style=\"font-weight:bold;\">Hello photo note.</span>"
-                                     "<br />"
-                                     "<span>Evernote logo :</span>"
-                                     "<br />"
-                                     "%@"
-                                     "</en-note>",[ENMLUtility mediaTagWithDataHash:dataHash mime:@"image/png"]];
+                                              "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
+                                              "<en-note>"
+                                              "<span style=\"font-weight:bold;\">Hello photo note.</span>"
+                                              "<br />"
+                                              "<span>Evernote logo :</span>"
+                                              "<br />"
+                                              "%@"
+                                              "</en-note>",[ENMLUtility mediaTagWithDataHash:dataHash mime:@"image/png"]];
             NSMutableArray* resources = [NSMutableArray arrayWithArray:@[resource]];
             EDAMNote *newNote = [[EDAMNote alloc] initWithGuid:nil title:@"Test photo note" content:noteContent contentHash:nil contentLength:(int)noteContent.length created:0 updated:0 deleted:0 active:YES updateSequenceNum:0 notebookGuid:nil tagGuids:nil resources:resources attributes:nil tagNames:nil];
-           [noteStore createNote:newNote inBusinessNotebook:businessNotebook success:^(EDAMNote *createdNote) {
-               NSLog(@"Created note : %@",createdNote.title);
-           } failure:^(NSError *error) {
-               NSLog(@"Failed to created a note : %@",error);
-           }];
+            [noteStore createNote:newNote inBusinessNotebook:businessNotebook success:^(EDAMNote *createdNote) {
+                          NSLog(@"Created note : %@",createdNote.title);
+                      }
+                      failure:^(NSError *error) {
+                NSLog(@"Failed to created a note : %@",error);
+            }];
         }
         else {
             NSLog(@"No business notebooks found");
         }
-    } failure:^(NSError *error) {
+    }
+    failure:^(NSError *error) {
         ;
     }];
 }

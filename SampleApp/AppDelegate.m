@@ -27,20 +27,20 @@
     // Change this to BootstrapServerBaseURLStringCN to use the Yinxiang Biji production service
     // BootstrapServerBaseURLStringSandbox does not support the  Yinxiang Biji service
     NSString *EVERNOTE_HOST = BootstrapServerBaseURLStringSandbox;
-    
+
     // Fill in the consumer key and secret with the values that you received from Evernote
     // To get an API key, visit http://dev.evernote.com/documentation/cloud/
     NSString *CONSUMER_KEY = @"your key";
     NSString *CONSUMER_SECRET = @"your secret";
-    
+
     // set up Evernote session singleton
-    [EvernoteSession setSharedSessionHost:EVERNOTE_HOST 
-                              consumerKey:CONSUMER_KEY 
-                           consumerSecret:CONSUMER_SECRET];
-    
+    [EvernoteSession setSharedSessionHost:EVERNOTE_HOST
+                     consumerKey:CONSUMER_KEY
+                     consumerSecret:CONSUMER_SECRET];
+
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -49,7 +49,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 

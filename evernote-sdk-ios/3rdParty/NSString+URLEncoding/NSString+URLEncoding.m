@@ -32,7 +32,7 @@
 
 @implementation NSString (URLEncoding)
 - (NSString *)stringByUnescapingFromURLQuery {
-	NSString *deplussed = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    NSString *deplussed = [self stringByReplacingOccurrencesOfString:@"+" withString:@" "];
     return [deplussed stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
@@ -43,7 +43,7 @@
     while (![scanner isAtEnd]) {
         NSString* pairString ;
         [scanner scanUpToCharactersFromSet:delimiterSet
-                                intoString:&pairString] ;
+                 intoString:&pairString] ;
         [scanner scanCharactersFromSet:delimiterSet intoString:NULL] ;
         NSArray* kvPair = [pairString componentsSeparatedByString:@"="] ;
         if ([kvPair count] == 2) {
@@ -57,54 +57,54 @@
 
 - (NSString *) urlEncode
 {
-	NSArray *escapeChars = [NSArray arrayWithObjects:@";" , @"/" , @"?" , @":" ,
-                            @"@" , @"&" , @"=" , @"+" ,
-                            @"$" , @"," , @"[" , @"]",
-                            @"#", @"!", @"'", @"(",
-                            @")", @"*", @" ", nil];
-	
-	NSArray *replaceChars = [NSArray arrayWithObjects:@"%3B" , @"%2F" , @"%3F" ,
-                             @"%3A" , @"%40" , @"%26" ,
-                             @"%3D" , @"%2B" , @"%24" ,
-                             @"%2C" , @"%5B" , @"%5D",
-                             @"%23", @"%21", @"%27",
-                             @"%28", @"%29", @"%2A", @"+", nil];
-	
-	NSUInteger len = [escapeChars count];
-	
-	NSMutableString *temp = [self mutableCopy];
-	
-	NSUInteger i;
-	for(i = 0; i < len; i++)
-	{
-		
-		[temp replaceOccurrencesOfString:[escapeChars objectAtIndex:i]
-                              withString:[replaceChars objectAtIndex:i]
-                                 options:NSLiteralSearch
-                                   range:NSMakeRange(0, [temp length])];
-	}
-	
-	NSString *result = [NSString stringWithString: temp];
-	return result;
+    NSArray *escapeChars = [NSArray arrayWithObjects:@";", @"/", @"?", @":",
+                                    @"@", @"&", @"=", @"+",
+                                    @"$", @",", @"[", @"]",
+                                    @"#", @"!", @"'", @"(",
+                                    @")", @"*", @" ", nil];
+
+    NSArray *replaceChars = [NSArray arrayWithObjects:@"%3B", @"%2F", @"%3F",
+                                     @"%3A", @"%40", @"%26",
+                                     @"%3D", @"%2B", @"%24",
+                                     @"%2C", @"%5B", @"%5D",
+                                     @"%23", @"%21", @"%27",
+                                     @"%28", @"%29", @"%2A", @"+", nil];
+
+    NSUInteger len = [escapeChars count];
+
+    NSMutableString *temp = [self mutableCopy];
+
+    NSUInteger i;
+    for(i = 0; i < len; i++)
+    {
+
+        [temp replaceOccurrencesOfString:[escapeChars objectAtIndex:i]
+              withString:[replaceChars objectAtIndex:i]
+              options:NSLiteralSearch
+              range:NSMakeRange(0, [temp length])];
+    }
+
+    NSString *result = [NSString stringWithString: temp];
+    return result;
 }
 
 - (NSString *)URLEncodedString
 {
     NSString *result = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                                             (__bridge CFStringRef)self,
-                                                                                             NULL,
-                                                                                             CFSTR("!*'();:@&=+$,/?%#[]"),
-                                                                                             kCFStringEncodingUTF8);
-	return result;
+                       (__bridge CFStringRef)self,
+                       NULL,
+                       CFSTR("!*'();:@&=+$,/?%#[]"),
+                       kCFStringEncodingUTF8);
+    return result;
 }
 
 - (NSString*)URLDecodedString
 {
-	NSString *result = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
-                                                                                                             (__bridge CFStringRef)self,
-                                                                                                             CFSTR(""),
-                                                                                                             kCFStringEncodingUTF8);
-	return result;	
+    NSString *result = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
+                       (__bridge CFStringRef)self,
+                       CFSTR(""),
+                       kCFStringEncodingUTF8);
+    return result;
 }
 
 @end

@@ -40,44 +40,47 @@
 #pragma mark - Shared notes
 
 - (void)listNotesForLinkedNotebook:(EDAMLinkedNotebook*)linkedNotebook
-                              withFilter:(EDAMNoteFilter *)filter
-                                 success:(void(^)(EDAMNoteList *list))success
-                                 failure:(void(^)(NSError *error))failure {
+    withFilter:(EDAMNoteFilter *)filter
+    success:(void(^)(EDAMNoteList *list))success
+    failure:(void(^)(NSError *error))failure {
     // Get the note store corresponding to this shared note
     EvernoteNoteStore* sharedNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:linkedNotebook];
     // Get the shared notebook, for the GUID
     [sharedNoteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook *sharedNotebook) {
-        EDAMNoteFilter* noteFilter = [[EDAMNoteFilter alloc] initWithOrder:filter.order
-                                                                 ascending:filter.ascending
-                                                                     words:filter.words
-                                                              notebookGuid:sharedNotebook.notebookGuid
-                                                                  tagGuids:filter.tagGuids
-                                                                  timeZone:filter.timeZone
-                                                                  inactive:filter.inactive
-                                                                emphasized:filter.emphasized];
+                        EDAMNoteFilter* noteFilter = [[EDAMNoteFilter alloc] initWithOrder:filter.order
+                                      ascending:filter.ascending
+                                      words:filter.words
+                                      notebookGuid:sharedNotebook.notebookGuid
+                                      tagGuids:filter.tagGuids
+                                      timeZone:filter.timeZone
+                                      inactive:filter.inactive
+                                      emphasized:filter.emphasized];
         [sharedNoteStore findNotesWithFilter:noteFilter
-                                      offset:0
-                                    maxNotes:200
-                                     success:^(EDAMNoteList *list) {
-                                         success(list);
-                                         
-                                     } failure:^(NSError *error) {
-                                         failure(error);
-                                     }];;
-    } failure:^(NSError *error) {
+                         offset:0
+                         maxNotes:200
+                        success:^(EDAMNoteList *list) {
+                            success(list);
+
+                        }
+                        failure:^(NSError *error) {
+            failure(error);
+        }];;
+    }
+    failure:^(NSError *error) {
         failure(error);
     }];
 
 }
 
 - (void)getCorrespondingNotebookForSharedNotebook:(EDAMSharedNotebook *)notebook
-                                            success:(void(^)(EDAMNotebook *notebook))success
-                                            failure:(void(^)(NSError *error))failure {
+    success:(void(^)(EDAMNotebook *notebook))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* noteStore = [EvernoteNoteStore noteStore];
     [noteStore authenticateToSharedNotebookWithShareKey:notebook.shareKey success:^(EDAMAuthenticationResult *result) {
-        NSLog(@"Auth result : %@",result);
-        
-    } failure:^(NSError *error) {
+                  NSLog(@"Auth result : %@",result);
+
+              }
+              failure:^(NSError *error) {
         NSLog(@"Error : %@",error);
     }];
 }
@@ -85,104 +88,115 @@
 #pragma mark - Evernote Business Notebooks
 
 - (void)listBusinessNotebooksWithSuccess:(void(^)(NSArray *linkedNotebooks))success
-                               failure:(void(^)(NSError *error))failure {
+    failure:(void(^)(NSError *error))failure {
     [self listLinkedNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
-        NSMutableArray *businessNotebooksMutable = [NSMutableArray array];
-        for (EDAMLinkedNotebook* linkedNotebook in linkedNotebooks) {
+             NSMutableArray *businessNotebooksMutable = [NSMutableArray array];
+             for (EDAMLinkedNotebook* linkedNotebook in linkedNotebooks) {
             if([linkedNotebook businessIdIsSet]) {
                 [businessNotebooksMutable addObject:linkedNotebook];
             }
         }
         NSArray* businessNotebooks = [NSArray arrayWithArray:businessNotebooksMutable];
         success(businessNotebooks);
-    } failure:^(NSError *error) {
+    }
+    failure:^(NSError *error) {
         failure(error);
     }];
 }
 
 - (void)isBusinessNotebookWritable:(EDAMLinkedNotebook *)linkedNotebook
-                                            success:(void(^)(BOOL isWritable))success
-                                      failure:(void(^)(NSError *error))failure {
+    success:(void(^)(BOOL isWritable))success
+    failure:(void(^)(NSError *error))failure {
     [self getCorrespondingNotebookForBusinessNotebook:linkedNotebook success:^(EDAMNotebook *notebook) {
-        if(notebook.restrictions.noCreateNotes==YES) {
-            success(NO);
-        } else {
-            success(YES);
+             if(notebook.restrictions.noCreateNotes==YES) {
+                 success(NO);
+             } else {
+                 success(YES);
         }
-    } failure:failure];
+    }
+    failure:failure];
 }
 
 - (void)createBusinessNotebook:(EDAMNotebook *)notebook
-               success:(void(^)(EDAMLinkedNotebook *notebook))success
-                       failure:(void(^)(NSError *error))failure {
+    success:(void(^)(EDAMLinkedNotebook *notebook))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* businessNoteStore = [EvernoteNoteStore businessNoteStore];
     [businessNoteStore createNotebook:notebook success:^(EDAMNotebook *businessNotebook) {
-        EDAMSharedNotebook* sharedNotebook = businessNotebook.sharedNotebooks[0];
+                          EDAMSharedNotebook* sharedNotebook = businessNotebook.sharedNotebooks[0];
         EDAMLinkedNotebook* linkedNotebook = [[EDAMLinkedNotebook alloc] init];
         [linkedNotebook setShareKey:[sharedNotebook shareKey]];
         [linkedNotebook setShareName:[businessNotebook name]];
         [linkedNotebook setUsername:[[[EvernoteSession sharedSession] businessUser] username]];
         [linkedNotebook setShardId:[[[EvernoteSession sharedSession] businessUser] shardId]];
         [self createLinkedNotebook:linkedNotebook
-                           success:^(EDAMLinkedNotebook *businessLinkedNotebook) {
-                               success(businessLinkedNotebook);
-        } failure:^(NSError *error) {
+             success:^(EDAMLinkedNotebook *businessLinkedNotebook) {
+                 success(businessLinkedNotebook);
+             }
+             failure:^(NSError *error) {
             failure(error);
         }];
-    } failure:^(NSError *error) {
+    }
+    failure:^(NSError *error) {
         failure(error);
     }];
 }
 
 - (void)deleteBusinessNotebook:(EDAMLinkedNotebook *)notebook
-                       success:(void(^)(int32_t usn))success
-                       failure:(void(^)(NSError *error))failure {
+    success:(void(^)(int32_t usn))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* businessNoteStore = [EvernoteNoteStore businessNoteStore];
     EvernoteNoteStore* sharedNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:notebook];
     [sharedNoteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook *sharedNotebook) {
-        NSMutableArray* notebookIds = [NSMutableArray arrayWithArray:@[[NSNumber numberWithLongLong:sharedNotebook.id]]];
+                        NSMutableArray* notebookIds = [NSMutableArray arrayWithArray:@[[NSNumber numberWithLongLong:sharedNotebook.id]]];
         [businessNoteStore expungeSharedNotebooksWithIds:notebookIds success:^(int32_t usn) {
-            [self expungeLinkedNotebookWithGuid:notebook.guid success:^(int32_t expungedUsn) {
-                success(expungedUsn);
-            } failure:failure];
-        } failure:failure];
-    } failure:^(NSError *error) {
+                              [self expungeLinkedNotebookWithGuid:notebook.guid success:^(int32_t expungedUsn) {
+                                  success(expungedUsn);
+                              }
+                              failure:failure];
+        }
+        failure:failure];
+    }
+    failure:^(NSError *error) {
         failure(error);
     }];
 }
 
 - (void)getCorrespondingNotebookForBusinessNotebook:(EDAMLinkedNotebook *)notebook
-                         success:(void(^)(EDAMNotebook *notebook))success
-                         failure:(void(^)(NSError *error))failure {
+    success:(void(^)(EDAMNotebook *notebook))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* sharedNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:notebook];
     [sharedNoteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook *sharedNotebook) {
-        EvernoteNoteStore* businessNoteStore = [EvernoteNoteStore businessNoteStore];
+                        EvernoteNoteStore* businessNoteStore = [EvernoteNoteStore businessNoteStore];
         [businessNoteStore getNotebookWithGuid:sharedNotebook.notebookGuid success:^(EDAMNotebook *correspondingNotebook) {
-            success(correspondingNotebook);
-        } failure:failure];
-    } failure:failure];
+                              success(correspondingNotebook);
+                          }
+                          failure:failure];
+    }
+    failure:failure];
 }
 
 #pragma mark - Evernote Business Notes
 
 - (void)createNote:(EDAMNote *)note
-        inBusinessNotebook:(EDAMLinkedNotebook*) notebook
-                   success:(void(^)(EDAMNote *note))success
-                   failure:(void(^)(NSError *error))failure {
+    inBusinessNotebook:(EDAMLinkedNotebook*) notebook
+    success:(void(^)(EDAMNote *note))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* sharedNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:notebook];
     [sharedNoteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook *sharedNotebook) {
-        [note setNotebookGuid:sharedNotebook.notebookGuid];
+                        [note setNotebookGuid:sharedNotebook.notebookGuid];
         [sharedNoteStore createNote:note success:^(EDAMNote *createdNote) {
-            success(createdNote);
-        } failure:failure];
-    } failure:failure];
+                            success(createdNote);
+                        }
+                        failure:failure];
+    }
+    failure:failure];
 }
 
 #pragma mark - Evernote Business Tags
 
 - (void)createBusinessTag:(EDAMTag *)tag
-          success:(void(^)(EDAMTag *tag))success
-          failure:(void(^)(NSError *error))failure {
+    success:(void(^)(EDAMTag *tag))success
+    failure:(void(^)(NSError *error))failure {
     EvernoteNoteStore* businessNoteStore = [EvernoteNoteStore businessNoteStore];
     [businessNoteStore
      createTag:tag
@@ -190,7 +204,7 @@
      failure:failure];
 }
 
-#pragma mark - Application bridge 
+#pragma mark - Application bridge
 
 - (void)saveNewNoteToEvernoteApp:(EDAMNote*)note withType:(NSString*)contentMimeType {
     if([[EvernoteSession sharedSession] isEvernoteInstalled]) {
@@ -231,11 +245,11 @@
         [appBridgeData setObject:[NSNumber numberWithUnsignedInt:kEN_ApplicationBridge_DataVersion] forKey:kEN_ApplicationBridge_DataVersionKey];
         [appBridgeData setObject:[request requestIdentifier] forKey:kEN_ApplicationBridge_RequestIdentifierKey];
         [appBridgeData setObject:[[EvernoteSession sharedSession] consumerKey] forKey:kEN_ApplicationBridge_ConsumerKey];
-        
-        
+
+
         NSData *requestData = [NSKeyedArchiver archivedDataWithRootObject:request];
         [appBridgeData setObject:requestData forKey:kEN_ApplicationBridge_RequestDataKey];
-        
+
         NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
         if (infoDictionary != nil) {
             NSString *appIdentifier = [infoDictionary objectForKey:(NSString *)kCFBundleIdentifierKey];
@@ -252,7 +266,7 @@
         NSString* openURL = [NSString stringWithFormat:@"en://app-bridge/consumerKey/%@/pasteBoardName/%@",[[EvernoteSession sharedSession] consumerKey],pasteboard.name];
         BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
         if(success) {
-            
+
         }
     }
     else {
@@ -269,11 +283,11 @@
         [request setConsumerKey:[[EvernoteSession sharedSession] consumerKey]];
         [request setNoteID:note.guid];
         [[EvernoteUserStore userStore] getUserWithSuccess:^(EDAMUser *user) {
-            [request setUserID:user.id];
+                                          [request setUserID:user.id];
             [request setShardID:user.shardId];
             NSData *requestData = [NSKeyedArchiver archivedDataWithRootObject:request];
             [appBridgeData setObject:requestData forKey:kEN_ApplicationBridge_RequestDataKey];
-            
+
             NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
             if (infoDictionary != nil) {
                 NSString *appIdentifier = [infoDictionary objectForKey:(NSString *)kCFBundleIdentifierKey];
@@ -293,13 +307,13 @@
             NSString* openURL = [NSString stringWithFormat:@"en://app-bridge/consumerKey/%@/pasteBoardName/%@",[[EvernoteSession sharedSession] consumerKey],pasteboard.name];
             BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
             if(success) {
-                
+
             }
 
         } failure:^(NSError *error) {
             ;
         }];
-           }
+    }
     else {
         if([[[EvernoteSession sharedSession] delegate] respondsToSelector:@selector(evernoteAppNotInstalled)]) {
             [[[EvernoteSession sharedSession] delegate] evernoteAppNotInstalled];
@@ -316,10 +330,10 @@
         [request setShardID:linkedNotebook.shardId];
         [request setLinkedNotebookID:linkedNotebook.guid];
         [[EvernoteUserStore userStore] getUserWithSuccess:^(EDAMUser *user) {
-            [request setUserID:user.id];
+                                          [request setUserID:user.id];
             NSData *requestData = [NSKeyedArchiver archivedDataWithRootObject:request];
             [appBridgeData setObject:requestData forKey:kEN_ApplicationBridge_RequestDataKey];
-            
+
             NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
             if (infoDictionary != nil) {
                 NSString *appIdentifier = [infoDictionary objectForKey:(NSString *)kCFBundleIdentifierKey];
@@ -339,9 +353,9 @@
             NSString* openURL = [NSString stringWithFormat:@"en://app-bridge/consumerKey/%@/pasteBoardName/%@",[[EvernoteSession sharedSession] consumerKey],pasteboard.name];
             BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
             if(success) {
-                
+
             }
-            
+
         } failure:^(NSError *error) {
             ;
         }];

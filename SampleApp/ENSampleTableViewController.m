@@ -40,7 +40,7 @@
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
- 
+
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -74,43 +74,43 @@
     static NSString *CellIdentifier = @"SampleCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     switch (indexPath.row) {
-        case ENSDKListNotebooks:
-            [[cell textLabel] setText:@"List Notebooks"];
-            break;
-        case ENListSharedNotes :
-            [[cell textLabel] setText:@"List Shared notes"];
-            break;
-        case ENCreatePhotoNote:
-            [[cell textLabel] setText:@"Create photo note"];
-            break;
-        case ENCreateReminderNote:
-            [[cell textLabel] setText:@"Create a note with a reminder"];
-            break;
-        case ENShowBusinessAPI:
-            [[cell textLabel] setText:@"Business API's"];
-            if(self.isBusiness == NO) {
-                cell.userInteractionEnabled = NO;
-                cell.textLabel.enabled = NO;
-                cell.detailTextLabel.enabled = NO;
-            }
-            break;
-        case ENSaveNewNoteToEvernote:
-            [[cell textLabel] setText:@"Reminder note using Evernote"];
-            break;
-        case ENInstallEvernoteForiOS:
-            [[cell textLabel] setText:@"Install Evernote for iOS"];
-            break;
-        case ENViewNoteInEvernote:
-            [[cell textLabel] setText:@"View note in Evernote"];
-            break;
-        case ENNoteBrowser:
-            [[cell textLabel] setText:@"Note browser"];
-            break;
-        case ENNotebookChooser:
-            [[cell textLabel] setText:@"Notebook chooser"];
-            break;
-        default:
-            break;
+    case ENSDKListNotebooks:
+        [[cell textLabel] setText:@"List Notebooks"];
+        break;
+    case ENListSharedNotes :
+        [[cell textLabel] setText:@"List Shared notes"];
+        break;
+    case ENCreatePhotoNote:
+        [[cell textLabel] setText:@"Create photo note"];
+        break;
+    case ENCreateReminderNote:
+        [[cell textLabel] setText:@"Create a note with a reminder"];
+        break;
+    case ENShowBusinessAPI:
+        [[cell textLabel] setText:@"Business API's"];
+        if(self.isBusiness == NO) {
+            cell.userInteractionEnabled = NO;
+            cell.textLabel.enabled = NO;
+            cell.detailTextLabel.enabled = NO;
+        }
+        break;
+    case ENSaveNewNoteToEvernote:
+        [[cell textLabel] setText:@"Reminder note using Evernote"];
+        break;
+    case ENInstallEvernoteForiOS:
+        [[cell textLabel] setText:@"Install Evernote for iOS"];
+        break;
+    case ENViewNoteInEvernote:
+        [[cell textLabel] setText:@"View note in Evernote"];
+        break;
+    case ENNoteBrowser:
+        [[cell textLabel] setText:@"Note browser"];
+        break;
+    case ENNotebookChooser:
+        [[cell textLabel] setText:@"Notebook chooser"];
+        break;
+    default:
+        break;
     }
     [[cell textLabel] setNumberOfLines:0];
     [[cell textLabel] sizeToFit];
@@ -133,10 +133,10 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
+    }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    }
 }
 */
 
@@ -161,38 +161,38 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.row) {
-        case ENSDKListNotebooks:
-            [self listNotes];
-            break;
-        case ENListSharedNotes :
-            [self listSharedNotes];
-            break;
-        case ENCreatePhotoNote:
-            [self createPhotoNote];
-            break;
-        case ENCreateReminderNote:
-            [self createReminderNote];
-            break;
-        case ENShowBusinessAPI:
-            [self performSegueWithIdentifier:@"ShowBusinessAPI" sender:self];
-            break;
-        case ENSaveNewNoteToEvernote:
-            [self saveNewNote];
-            break;
-        case ENInstallEvernoteForiOS:
-            [self installEvernote];
-            break;
-        case ENViewNoteInEvernote:
-            [self viewNote];
-            break;
-        case ENNoteBrowser:
-            [self performSegueWithIdentifier:@"showNoteBrowser" sender:self];
-            break;
-        case ENNotebookChooser:
-            [self invlokeNotebookChooser];
-            break;
-        default:
-            break;
+    case ENSDKListNotebooks:
+        [self listNotes];
+        break;
+    case ENListSharedNotes :
+        [self listSharedNotes];
+        break;
+    case ENCreatePhotoNote:
+        [self createPhotoNote];
+        break;
+    case ENCreateReminderNote:
+        [self createReminderNote];
+        break;
+    case ENShowBusinessAPI:
+        [self performSegueWithIdentifier:@"ShowBusinessAPI" sender:self];
+        break;
+    case ENSaveNewNoteToEvernote:
+        [self saveNewNote];
+        break;
+    case ENInstallEvernoteForiOS:
+        [self installEvernote];
+        break;
+    case ENViewNoteInEvernote:
+        [self viewNote];
+        break;
+    case ENNoteBrowser:
+        [self performSegueWithIdentifier:@"showNoteBrowser" sender:self];
+        break;
+    case ENNotebookChooser:
+        [self invlokeNotebookChooser];
+        break;
+    default:
+        break;
     }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -203,11 +203,12 @@
     EvernoteNoteStore *noteStore = [EvernoteNoteStore noteStore];
     [self.activityIndicatorView startAnimating];
     [noteStore listNotebooksWithSuccess:^(NSArray *notebooks) {
-        self.consoleText = [NSString stringWithFormat:@"notebooks: %@", notebooks];
+                  self.consoleText = [NSString stringWithFormat:@"notebooks: %@", notebooks];
         [self.activityIndicatorView stopAnimating];
         self.notebooks = notebooks;
         [self performSegueWithIdentifier:@"ShowNotebookTableView" sender:nil];
-    } failure:^(NSError *error) {
+    }
+    failure:^(NSError *error) {
         NSLog(@"error %@", error);
     }];
 }
@@ -217,20 +218,21 @@
     EvernoteNoteStore *defaultNoteStore = [EvernoteNoteStore noteStore];
     [self.activityIndicatorView startAnimating];
     [defaultNoteStore listLinkedNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
-        if(linkedNotebooks.count >0) {
-            EDAMNoteFilter* noteFilter = [[EDAMNoteFilter alloc] initWithOrder:0
-                                                                     ascending:NO
-                                                                         words:nil
-                                                                  notebookGuid:nil
-                                                                      tagGuids:nil
-                                                                      timeZone:nil
-                                                                      inactive:NO
-                                                                    emphasized:nil];
+                         if(linkedNotebooks.count >0) {
+                             EDAMNoteFilter* noteFilter = [[EDAMNoteFilter alloc] initWithOrder:0
+                                          ascending:NO
+                                          words:nil
+                                          notebookGuid:nil
+                                          tagGuids:nil
+                                          timeZone:nil
+                                          inactive:NO
+                                          emphasized:nil];
             [defaultNoteStore listNotesForLinkedNotebook:linkedNotebooks[0]  withFilter:noteFilter success:^(EDAMNoteList *list) {
-                self.consoleText = [NSString stringWithFormat:@"Shared notes : %@",list];
+                                 self.consoleText = [NSString stringWithFormat:@"Shared notes : %@",list];
                 [self.activityIndicatorView stopAnimating];
                 [self logToConsole];
-            } failure:^(NSError *error) {
+            }
+            failure:^(NSError *error) {
                 NSLog(@"Error : %@",error);
                 [self.activityIndicatorView stopAnimating];
             }];
@@ -239,8 +241,9 @@
             NSLog(@"No linked notebooks.");
             [self.activityIndicatorView stopAnimating];
         }
-        
-    } failure:^(NSError *error) {
+
+    }
+    failure:^(NSError *error) {
         NSLog(@"Error listing linked notes: %@",error);
         [self.activityIndicatorView stopAnimating];
     }];
@@ -268,14 +271,15 @@
     [newNote setContentLength:(int)noteContent.length];
     [newNote setResources:resources];
     [[EvernoteNoteStore noteStore] setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        NSLog(@"Total bytes written : %lld , Total bytes expected to be written : %lld",totalBytesWritten,totalBytesExpectedToWrite);
-    }];
+                                      NSLog(@"Total bytes written : %lld , Total bytes expected to be written : %lld",totalBytesWritten,totalBytesExpectedToWrite);
+                                  }];
     NSLog(@"Contents : %@",myWriter.contents);
     [self.activityIndicatorView startAnimating];
     [[EvernoteNoteStore noteStore] createNote:newNote success:^(EDAMNote *note) {
-        [self.activityIndicatorView stopAnimating];
-        NSLog(@"Note created successfully.");
-    } failure:^(NSError *error) {
+                                      [self.activityIndicatorView stopAnimating];
+                                      NSLog(@"Note created successfully.");
+    }
+    failure:^(NSError *error) {
         NSLog(@"Error creating note : %@",error);
         [self.activityIndicatorView stopAnimating];
     }];
@@ -291,18 +295,19 @@
     NSDate* now = [NSDate date];
     // After a minute
     NSDate* then = [now dateByAddingTimeInterval:3600];
-    
+
     // Set the reminder
     EDAMNoteAttributes* noteAttributes = [[EDAMNoteAttributes alloc] initWithSubjectDate:0 latitude:0 longitude:0 altitude:0 author:nil source:nil sourceURL:nil sourceApplication:nil shareDate:0 reminderOrder:[now enedamTimestamp] reminderDoneTime:0 reminderTime:[then enedamTimestamp] placeName:nil contentClass:nil applicationData:nil lastEditedBy:nil classifications:nil creatorId:0 lastEditorId:0];
-    
+
     // Create note object
     EDAMNote *ourNote = [[EDAMNote alloc] initWithGuid:nil title:@"Testing Reminders" content:noteContent contentHash:nil contentLength:(int)noteContent.length created:0 updated:0 deleted:0 active:YES updateSequenceNum:0 notebookGuid:nil tagGuids:nil resources:nil attributes:noteAttributes tagNames:nil];
-    
+
     // Attempt to create note in Evernote account with Reminder
     [[EvernoteNoteStore noteStore] createNote:ourNote success:^(EDAMNote *note) {
-        // Log the created note object
-        NSLog(@"Note created : %@",note);
-    } failure:^(NSError *error) {
+                                      // Log the created note object
+                                      NSLog(@"Note created : %@",note);
+                                  }
+                                  failure:^(NSError *error) {
         // Something was wrong with the note data
         // See EDAMErrorCode enumeration for error code explanation
         // http://dev.evernote.com/documentation/reference/Errors.html#Enum_EDAMErrorCode
@@ -323,7 +328,7 @@
         NSDate* now = [NSDate date];
         // After 60 minutes
         NSDate* then = [now dateByAddingTimeInterval:3600];
-        
+
         // Set the reminder
         EDAMNoteAttributes* noteAttributes = [[EDAMNoteAttributes alloc] initWithSubjectDate:0 latitude:0 longitude:0 altitude:0 author:nil source:nil sourceURL:nil sourceApplication:nil shareDate:0 reminderOrder:[now enedamTimestamp] reminderDoneTime:0 reminderTime:[then enedamTimestamp] placeName:nil contentClass:nil applicationData:nil lastEditedBy:nil classifications:nil creatorId:0 lastEditorId:0];
         EDAMNote* note = [[EDAMNote alloc] initWithGuid:nil title:@"Test TODO note" content:@"<strong>Here is my new HTML note</strong>" contentHash:nil contentLength:0 created:0 updated:0 deleted:0 active:YES updateSequenceNum:0 notebookGuid:nil tagGuids:nil resources:resources attributes:noteAttributes tagNames:tagNames];
@@ -333,7 +338,7 @@
     else {
         [self installEvernote];
     }
-    
+
 }
 
 - (IBAction)viewNote {
@@ -341,9 +346,10 @@
         NSLog(@"Viewing note..");
         EDAMNoteFilter* filter = [[EDAMNoteFilter alloc] initWithOrder:0 ascending:NO words:nil notebookGuid:nil tagGuids:nil timeZone:nil inactive:NO emphasized:nil];
         [[EvernoteNoteStore noteStore] findNotesWithFilter:filter offset:0 maxNotes:100 success:^(EDAMNoteList *list) {
-            NSLog(@"Notes : %lu",(unsigned long)list.notes.count);
+                                          NSLog(@"Notes : %lu",(unsigned long)list.notes.count);
             [[EvernoteNoteStore noteStore] viewNoteInEvernote:list.notes[0]];
-        } failure:^(NSError *error) {
+        }
+        failure:^(NSError *error) {
             NSLog(@"Error : %@",error);
         }];
     }
@@ -365,9 +371,9 @@
         nbc.modalPresentationStyle = UIModalPresentationFormSheet;
         notbookChooserNav.modalPresentationStyle = UIModalPresentationFormSheet;
     }
-    [[self navigationController] presentViewController:notbookChooserNav animated:YES completion:^{
-        [nbc.navigationItem setTitle:@"Select a notebook"];
-    }];
+    [[self navigationController] presentViewController:notbookChooserNav animated:YES completion:^ {
+                                    [nbc.navigationItem setTitle:@"Select a notebook"];
+                                }];
 }
 
 - (void)logToConsole {
